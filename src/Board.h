@@ -26,6 +26,8 @@ class Board {
         // Add these so header matches implementation
         bool getIsGameOver() const;
         bool getIsGameWon() const;
+		void resetBoard();
+
 
 	private:
 		int width;
@@ -40,6 +42,8 @@ class Board {
 		bool isGameOver;
 		bool isGameWon;
 		int cellsRevealed;
+
+
 };
 
 #endif

@@ -18,14 +18,12 @@ Board::Board(int width, int height, int mineCount)
 	//Initialize the board with empty cells
 	cell.resize(height, std::vector<Cell>(width));
 
-
-
+	// Seed RNG once (avoid reseeding every time placeMines is called).
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
 }
 
 //Places mines in random coordinates of the board
 void Board::placeMines(int ClickX, int ClickY) {
-	std::srand(static_cast<unsigned int>(std::time(nullptr)));
-
 	int placedMines = 0;
 	while (placedMines < mineCount) {
 		int x = std::rand() % width;
@@ -135,6 +133,8 @@ void Board::revealCell(int x, int y) {
 			int nx = x + dir.first;
 			int ny = y + dir.second;
 			if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+				// Skip mines when expanding flood-fill to avoid revealing them and triggering game over.
+				if (cell[ny][nx].isMine) continue;
 				// Recurse; function checks flags/revealed
 				revealCell(nx, ny);
 			}
@@ -172,5 +172,26 @@ bool Board::getIsGameOver() const {
 
 bool Board::getIsGameWon() const {
 	return isGameWon;
+}
+
+//Reset Board either when the user gives up/loses/wins
+void Board::resetBoard() {
+	//Reset values of all game conditions
+	firstClickHandled = false;
+	isGameOver = false;
+	isGameWon = false;
+	cellsRevealed = 0;
+
+	for (int y = 0; y < height; ++y)
+	{
+		for (int x = 0; x < width; ++x)
+		{
+			//reset all values of each cell
+			cell[y][x].isFlagged = false;
+			cell[y][x].isMine = false;
+			cell[y][x].isRevealed = false;
+			cell[y][x].adjacentMines = 0;
+		}
+	}
 }
 //End of Board.cpp
