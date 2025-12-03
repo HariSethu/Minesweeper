@@ -3,6 +3,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 #include <vector>
+#include <FL/Fl_PNG_Image.H>
 
 struct Cell {
 	bool isMine;
@@ -23,10 +24,15 @@ class Board {
 		const Cell& getCell(int x, int y) const;
 		int getMineCount() const;
 
-        // Add these so header matches implementation
+        
         bool getIsGameOver() const;
         bool getIsGameWon() const;
 		void resetBoard();
+
+		int getFlagsPlaced() const; //new function to get number of flags placed
+
+		//Chord addition
+		void chordCell(int x, int y);
 
 
 	private:
@@ -42,6 +48,7 @@ class Board {
 		bool isGameOver;
 		bool isGameWon;
 		int cellsRevealed;
+		int flagsPlaced;
 
 
 };

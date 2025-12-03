@@ -93,6 +93,8 @@ const Cell& Board::getCell(int x, int y) const
 {
 	return cell[y][x];
 }
+int Board::getFlagsPlaced() const { return flagsPlaced; }
+
 
 //Reveals the cell at given coordinate when selected
 void Board::revealCell(int x, int y) {
@@ -140,7 +142,9 @@ void Board::revealCell(int x, int y) {
 			}
 		}
 	}
+	if (x < 0 || x >= width || y < 0 || y >= height) {return;}
 
+	
 	checkWinCondition();
 }
 
@@ -156,6 +160,12 @@ void Board::toggleFlag(int x, int y) {
 
 	//Else, Toggle flagged state of cell
 	cell[y][x].isFlagged = !cell[y][x].isFlagged;
+
+	if (cell[y][x].isFlagged) {
+		flagsPlaced++;
+	} else {
+		flagsPlaced--;
+	}
 }
 
 void Board::checkWinCondition() {
@@ -181,6 +191,7 @@ void Board::resetBoard() {
 	isGameOver = false;
 	isGameWon = false;
 	cellsRevealed = 0;
+	flagsPlaced = 0;
 
 	for (int y = 0; y < height; ++y)
 	{
@@ -191,6 +202,50 @@ void Board::resetBoard() {
 			cell[y][x].isMine = false;
 			cell[y][x].isRevealed = false;
 			cell[y][x].adjacentMines = 0;
+		}
+	}
+}
+
+void Board::chordCell(int x, int y) {
+	//Basic checks to see if coordinates are valid and revealed
+	if (x < 0 || x >= width || y < 0 || y >= height) {
+		return;
+	}
+	Cell& currCell = cell[y][x];
+
+	//Check if cell is revealed and has adjacent mines
+	if (!currCell.isRevealed || currCell.adjacentMines == 0) {
+		return;
+	}
+
+	//Count surronding flags
+	const int directions[8][2] = {
+		{-1, -1}, {-1, 0}, {-1, 1},
+		{0, -1},          {0, 1},
+		{1, -1}, {1, 0}, {1, 1}
+	};
+	int flagCount = 0;
+	//Count flags around the cell
+	for (const auto& dir : directions) {
+		int newX = x + dir[0];
+		int newY = y + dir[1];
+		if (newX >= 0 && newX < width && newY >= 0 && newY < height) {
+			if (cell[newY][newX].isFlagged) {
+				flagCount++;
+			}
+		}
+	}
+	//If flags match adjacent mines, reveal unflagged neighbors
+	if (flagCount == currCell.adjacentMines) {
+		for (const auto& dir : directions) {
+			int nx = x + dir[0];
+			int ny = y + dir[1];
+			if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+				//Only reveal unflagged cells
+				if (!cell[ny][nx].isFlagged) {
+					revealCell(nx, ny);
+				}
+			}
 		}
 	}
 }
