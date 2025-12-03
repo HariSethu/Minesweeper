@@ -24,6 +24,7 @@
     <ClInclude Include="src\Settings.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="cpp src\Board.cpp" />
     <ClCompile Include="src\Board.cpp" />
     <ClCompile Include="src\GameWindow.cpp" />
     <ClCompile Include="src\main.cpp" />

@@ -80,8 +80,8 @@ void SettingsWindow::start_cb(Fl_Widget* w, void* data)
 		mines = 5;
 	}
 	// Enforce minimums (keep original behavior)
-	if (width < 5) { width = 5; }
-	if (height < 5) { height = 5; }
+	if (width < 9) { width = 9; }
+	if (height < 9) { height = 9; }
 
 	// If mines invalid (less than 1) default to 5
 	if (mines < 1) { mines = 5; }

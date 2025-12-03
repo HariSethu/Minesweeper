@@ -146,7 +146,7 @@ void Board::revealCell(int x, int y) {
 	}
 	if (x < 0 || x >= width || y < 0 || y >= height) {return;}
 
-	
+
 	checkWinCondition();
 }
 
@@ -175,9 +175,30 @@ void Board::toggleFlag(int x, int y) {
 
 void Board::checkWinCondition() {
 	int totalCells = width * height;
-	if(cellsRevealed == totalCells - mineCount) {
+	// Win if all non-mine cells are revealed
+	if (cellsRevealed == totalCells - mineCount) {
 		isGameWon = true;
 		isGameOver = true;
+		return;
+	}
+
+	// Alternate win: all mines are flagged and no non-mine is flagged
+	if (flagsPlaced == mineCount) {
+		int flaggedCount = 0;
+		int correctFlags = 0;
+		for (int y = 0; y < height; ++y) {
+			for (int x = 0; x < width; ++x) {
+				if (cell[y][x].isFlagged) {
+					++flaggedCount;
+					if (cell[y][x].isMine) ++correctFlags;
+				}
+			}
+		}
+		if (flaggedCount == mineCount && correctFlags == mineCount) {
+			isGameWon = true;
+			isGameOver = true;
+			return;
+		}
 	}
 }
 
@@ -254,4 +275,3 @@ void Board::chordCell(int x, int y) {
 		}
 	}
 }
-//End of Board.cpp
