@@ -6,6 +6,7 @@
 #include <FL/fl_ask.H>
 #include <iomanip>
 #include <FL/fl_draw.H>
+#include <FL/Fl_Image.H>
 
 //Initialize GameWindow with board dimensions and mine count
 
@@ -285,8 +286,11 @@ void GameWindow::updateGUI() {
 					btn->labelcolor(FL_RED);
 				}
 			} else {
+				 //clear any previous flag image when flag removed
+				if (btn->image()) btn->image(static_cast<Fl_Image*>(nullptr));
 				btn->activate();
 				btn->copy_label("");
+				btn->labelcolor(FL_BLACK); // reset any leftover label color
 			}
 		}
 		btn->redraw(); //Redraw button to reflect changes
