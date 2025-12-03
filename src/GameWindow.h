@@ -57,7 +57,7 @@ class GameWindow : public Fl_Window {
 		Fl_Button* createCellButton(int x, int y); //Function to create a button for a cell at (x, y)
 		Fl_Button* getButtonAt(int x, int y); //Function to get the button at cell (x, y)
 
-		//Store Pointers to Images for Mines, Flags (Fl_PNG_Image is a Fl_Image subclass)
+		//Store Pointers to Images for Mines, Flags
 		Fl_PNG_Image* imgMine;
 		Fl_PNG_Image* imgFlag;
 

@@ -16,8 +16,8 @@ GameWindow::GameWindow(int width, int height, int mineCount)
 	int window = width * 30;
 	int center = window / 2;
 
-	// Increase top area so the board moves down more
-	const int topControlsHeight = 120; // moved down more than original 60
+	// Increase top area so the board moves down more to allow space for widgets
+	const int topControlsHeight = 120; 
 
 	//Timer Initialization
 	secondsElapsed = 0;
@@ -46,11 +46,11 @@ GameWindow::GameWindow(int width, int height, int mineCount)
 	resetButton = resetBtn;
 	resetBtn->callback(new_game, this);
 
-	// Menu/Newgame Button (original placement to the right of reset)
+	// Menu/Newgame Button
 	settingsButton = new Fl_Button(center + 50, 10 + 12, 80, 30, "Settings");
 	settingsButton->callback(settings_cb, this);
 	
-	//Timer Label and Output (stacked under Remaining: same X as Remaining)
+	//Timer Label and Output
 	// compute positions relative to mineCounterOutput placement to ensure they share X axis
 	const int mined_label_y = 8;
 	const int mined_output_y = mined_label_y + 15 + 4; // 27

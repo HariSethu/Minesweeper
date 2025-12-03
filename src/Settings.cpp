@@ -3,7 +3,6 @@
 #include <string>
 #include <cstdlib>
 
-
 //Constructor to instantiate the start settings window
 SettingsWindow::SettingsWindow(int width, int height, const char* title) : Fl_Window(width, height, title)
 {
@@ -19,7 +18,6 @@ SettingsWindow::SettingsWindow(int width, int height, const char* title) : Fl_Wi
 
 	//Preset Values Buttons
 	Beginner_btn = new Fl_Button(320, 20, 70, 25, "Beginner");
-	// Pass the preset string as the callback data (do not overwrite it later)
 	Beginner_btn->callback(preset_cb, (void*)"9 9 10");
 
 	//Intermediate Preset
@@ -32,7 +30,6 @@ SettingsWindow::SettingsWindow(int width, int height, const char* title) : Fl_Wi
 
 	//Start Game button
 	startButton = new Fl_Button(150, 160, 150, 30, "Start Game");
-	//Callback
 	startButton-> callback(start_cb, this);
 	end();
 }
@@ -43,19 +40,15 @@ SettingsWindow::~SettingsWindow() {}
 //Callback for the preset buttons
 void SettingsWindow::preset_cb(Fl_Widget* w, void* data)
 {
-	//Find the SettingsWindow from the widget hierarchy (the button's parent is the window).
 	SettingsWindow* sw = static_cast<SettingsWindow*>(w->parent());
 	if (!sw) return;
 
-	// The callback data is the preset string we passed when registering the callback.
 	const char* preset_cstr = static_cast<const char*>(data);
 	if (!preset_cstr) return;
 
 	int width = 0, height = 0, mines = 0;
 	sscanf_s(preset_cstr, "%d %d %d", &width, &height, &mines);
 
-	// Convert to string temporaries and set the input values.
-	// Fl_Input::value copies the passed C-string, so temporaries are OK here.
 	std::string wstr = std::to_string(width);
 	std::string hstr = std::to_string(height);
 	std::string mstr = std::to_string(mines);
@@ -72,17 +65,33 @@ void SettingsWindow::start_cb(Fl_Widget* w, void* data)
 	//Retrieve the current SettingsWindow instance
 	
 	SettingsWindow* sw = static_cast<SettingsWindow*>(data);
+	if (!sw) return;
+
 	//Get width, height, and mine count from input fields
 	int width = std::atoi(sw->widthInput->value());
 	int height = std::atoi(sw->heightInput->value());
 	int mines = std::atoi(sw->mineInput->value());
 
-	//Error Handling for invalid User inputs
+	// If dimensions exceed 100x100, or mines invalid relative to board size,
+	// reset to default 9x9 with 5 mines.
+	if (width > 100 || height > 100) {
+		width = 9;
+		height = 9;
+		mines = 5;
+	}
+	// Enforce minimums (keep original behavior)
 	if (width < 5) { width = 5; }
 	if (height < 5) { height = 5; }
-	if (mines < 1) { mines = 5; }
-	if (mines >= width * height) { mines = width * height - 1; }
 
+	// If mines invalid (less than 1) default to 5
+	if (mines < 1) { mines = 5; }
+
+	// If mines would exceed or equal board size, reset entire settings to 9x9/5 as requested
+	if (mines >= width * height) {
+		width = 9;
+		height = 9;
+		mines = 5;
+	}
 
 	//Create GameWindow with user defined settings
 	GameWindow* gw = new GameWindow(width, height, mines);
